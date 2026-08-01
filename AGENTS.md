@@ -8,6 +8,7 @@
 - 本專案只處理文字、單一檔案與一般資料夾批次。
 - 本專案不修改 Calibre DB、不直接處理 EPUB ZIP/package、不取代 `D:\project\epub223` 的 EPUB 安全轉換流程。
 - EPUB 內 XHTML、OPF、NCX、XML 的安全轉換仍交由 `D:\project\epub223`，避免誤改 `href`、`src`、`id`、CSS、URL 或 script/style。
+- 本專案授權為 GPL-3.0-or-later；修改授權相關資訊時需同步 `LICENSE`、`README.md` 與 `pyproject.toml`。
 
 ## 參考來源
 

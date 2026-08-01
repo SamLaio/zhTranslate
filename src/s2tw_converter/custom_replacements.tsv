@@ -1,7 +1,3 @@
-# 原詞	正體詞
-# 來源：D:\project\epub223\epub3itizer\custom_replacements.tsv
-# 來源：D:\project\metaFinder\src\metafinder\custom_replacements.tsv
-# 說明：兩份來源字典目前內容一致；本檔另保留 zhTranslate 既有且不衝突的本地詞條。
 一出	一齣
 不断发现	不斷發現
 不断发生	不斷發生
@@ -313,8 +309,6 @@ jian	賤
 指令碼	腳本
 説	說
 脱	脫
-# 來源：D:\Downloads\kiwqtshoh.txt
-# 說明：保守匯入目前不存在且非 identity 的 OpenCC 後修正候選；STCharacters/STPhrases 不直接匯入。
 幹戈	干戈
 幹謁	干謁
 未幹	未乾
@@ -464,3 +458,4 @@ jian	賤
 閒邪	閑邪
 閒先聖之道	閑先聖之道
 白麪書生	白面書生
+爲	為

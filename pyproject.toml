@@ -3,9 +3,14 @@ name = "s2tw-converter"
 version = "0.1.0"
 description = "Standalone Simplified Chinese to Taiwan Traditional Chinese converter."
 readme = "README.md"
+license = "GPL-3.0-or-later"
 requires-python = ">=3.10"
 dependencies = [
   "opencc-python-reimplemented>=0.1.7",
+]
+classifiers = [
+  "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
+  "Programming Language :: Python :: 3",
 ]
 
 [project.scripts]

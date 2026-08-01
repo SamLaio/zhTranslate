@@ -137,6 +137,10 @@ D:\github\zhTranslate\src\s2tw_converter\custom_replacements.tsv
 python -m pytest -q
 ```
 
+## 授權
+
+本專案使用 GPL-3.0-or-later 授權，詳見 `LICENSE`。
+
 ## 維護原則
 
 - 新增泛用詞彙修正時，先補 `custom_replacements.tsv`。
