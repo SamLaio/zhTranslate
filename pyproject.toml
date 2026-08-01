@@ -1,0 +1,25 @@
+[project]
+name = "s2tw-converter"
+version = "0.1.0"
+description = "Standalone Simplified Chinese to Taiwan Traditional Chinese converter."
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+  "opencc-python-reimplemented>=0.1.7",
+]
+
+[project.scripts]
+s2tw-convert = "s2tw_converter.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+s2tw_converter = ["custom_replacements.tsv"]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
