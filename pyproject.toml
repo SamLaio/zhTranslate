@@ -1,6 +1,6 @@
 [project]
 name = "s2tw-converter"
-version = "0.1.0"
+version = "0.1.1"
 description = "Standalone Simplified Chinese to Taiwan Traditional Chinese converter."
 readme = "README.md"
 license = "GPL-3.0-or-later"

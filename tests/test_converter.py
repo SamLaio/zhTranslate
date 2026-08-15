@@ -53,6 +53,18 @@ def test_read_text_with_gb18030_fallback(tmp_path: Path) -> None:
     assert read_text_with_fallback(source) == "实时信息"
 
 
+def test_read_text_prefers_cp950_before_gb18030(tmp_path: Path) -> None:
+    source = tmp_path / "big5.txt"
+    source.write_bytes("《擇日走紅》作者：宋不留春".encode("cp950"))
+    assert read_text_with_fallback(source) == "《擇日走紅》作者：宋不留春"
+
+
+def test_read_text_accepts_mostly_cp950_with_few_bad_bytes(tmp_path: Path) -> None:
+    source = tmp_path / "mostly-big5.txt"
+    source.write_bytes("《擇日走紅》作者：宋不留春".encode("cp950") + b"\x99")
+    assert read_text_with_fallback(source).startswith("《擇日走紅》作者：宋不留春")
+
+
 def test_convert_file_writes_utf8(tmp_path: Path) -> None:
     source = tmp_path / "input.txt"
     target = tmp_path / "output.txt"

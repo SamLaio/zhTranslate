@@ -14,7 +14,7 @@ else:
 
 
 PACKAGE_REPLACEMENTS = Path(__file__).with_name("custom_replacements.tsv")
-DEFAULT_ENCODINGS = ("utf-8-sig", "utf-8", "gb18030", "big5")
+DEFAULT_ENCODINGS = ("utf-8-sig", "utf-8", "utf-16", "cp950", "big5", "gb18030")
 DEFAULT_EXTENSIONS = (".txt", ".md")
 OUTPUT_SUFFIX = "_zyTw"
 WESTERN_TO_EAST_ASIAN_QUOTES = str.maketrans({
@@ -91,14 +91,40 @@ def read_text_with_fallback(path: Path, encodings: Iterable[str] = DEFAULT_ENCOD
     data = path.read_bytes()
     if data.startswith((b"\xff\xfe", b"\xfe\xff")):
         return data.decode("utf-16")
-    for encoding in encodings:
+    for encoding in ("utf-8-sig", "utf-8"):
         try:
             return data.decode(encoding)
         except UnicodeDecodeError as exc:
             last_error = exc
+    decoded: list[tuple[int, int, str]] = []
+    non_utf_encodings = [encoding for encoding in encodings if encoding not in {"utf-8-sig", "utf-8", "utf-16"}]
+    for index, encoding in enumerate(non_utf_encodings):
+        try:
+            text = data.decode(encoding)
+        except UnicodeDecodeError as exc:
+            last_error = exc
+            if encoding not in {"cp950", "big5"}:
+                continue
+            text = data.decode(encoding, errors="replace")
+        decoded.append((_readability_score(text), index, text))
+    if decoded:
+        return max(decoded, key=lambda item: (item[0], item[1]))[2]
     if last_error:
         raise last_error
     return data.decode("utf-8")
+
+
+def _readability_score(text: str) -> int:
+    score = 0
+    for char in text[:20000]:
+        code = ord(char)
+        if "\u4e00" <= char <= "\u9fff":
+            score += 3
+        elif char in "，。、！？；：「」『』（）《》\n\r\t ":
+            score += 1
+        elif "\ue000" <= char <= "\uf8ff" or "\uac00" <= char <= "\ud7af" or char == "\ufffd":
+            score -= 8
+    return score
 
 
 def convert_file(

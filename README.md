@@ -19,7 +19,7 @@
 - 預設將 `“”‘’` 轉成 `「」『』`。
 - 可轉換單段文字、單一檔案、整個資料夾。
 - 輸出檔名會自動在副檔名前加上 `_zyTw`，例如 `book.txt` 會輸出成 `book_zyTw.txt`。
-- 讀檔支援 `utf-8-sig`、`utf-8`、`utf-16`、`gb18030`、`big5` fallback。
+- 讀檔支援 `utf-8-sig`、`utf-8`、`utf-16`、`cp950`、`big5`、`gb18030` fallback；Big5/CP950 會早於 GB18030 嘗試，避免繁體 TXT 被 GB18030 誤解成亂碼。
 
 ## 安裝
 
