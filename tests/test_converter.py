@@ -27,6 +27,11 @@ def test_imported_replacements_from_kiwqtshoh() -> None:
     assert converted == "中文系裡面發展，後期並不輕鬆"
 
 
+def test_otaku_terms_use_standard_taiwan_wording() -> None:
+    converted = Converter().convert("禦宅族與禦宅文化")
+    assert converted == "御宅族與御宅文化"
+
+
 def test_custom_replacements_apply_before_and_after_opencc(tmp_path: Path) -> None:
     replacements = tmp_path / "custom.tsv"
     replacements.write_text("测试词\t測試詞\n轉換後\t修正後\n", encoding="utf-8")
