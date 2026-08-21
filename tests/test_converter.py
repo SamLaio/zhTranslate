@@ -32,6 +32,16 @@ def test_otaku_terms_use_standard_taiwan_wording() -> None:
     assert converted == "御宅族與御宅文化"
 
 
+def test_series_after_comma_stays_standard_taiwan_wording() -> None:
+    converted = Converter().convert("短篇小說集，系列中關於神靈")
+    assert converted == "短篇小說集，系列中關於神靈"
+
+
+def test_translator_name_zhou_peiyu_keeps_official_character() -> None:
+    converted = Converter().convert("譯者周沛郁")
+    assert converted == "譯者周沛郁"
+
+
 def test_custom_replacements_apply_before_and_after_opencc(tmp_path: Path) -> None:
     replacements = tmp_path / "custom.tsv"
     replacements.write_text("测试词\t測試詞\n轉換後\t修正後\n", encoding="utf-8")
