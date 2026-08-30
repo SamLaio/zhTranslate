@@ -42,6 +42,11 @@ def test_translator_name_zhou_peiyu_keeps_official_character() -> None:
     assert converted == "譯者周沛郁"
 
 
+def test_translator_name_lin_yuting_keeps_official_character() -> None:
+    converted = Converter().convert("譯者林于楟")
+    assert converted == "譯者林于楟"
+
+
 def test_custom_replacements_apply_before_and_after_opencc(tmp_path: Path) -> None:
     replacements = tmp_path / "custom.tsv"
     replacements.write_text("测试词\t測試詞\n轉換後\t修正後\n", encoding="utf-8")
