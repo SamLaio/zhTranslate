@@ -44,7 +44,8 @@ def load_replacements(paths: Iterable[Path | str] | None = None) -> tuple[tuple[
                 target = target.strip().split()[0] if target.strip() else ""
                 if source and target:
                     replacements[source] = target
-    return tuple(sorted(replacements.items(), key=lambda item: len(item[0]), reverse=True))
+    # Apply character defaults before phrase exceptions; keep longer phrases first.
+    return tuple(sorted(replacements.items(), key=lambda item: (len(item[0]) != 1, -len(item[0]))))
 
 
 @dataclass

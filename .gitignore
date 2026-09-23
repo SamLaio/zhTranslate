@@ -9,3 +9,7 @@ dist/
 build/
 *.egg-info/
 *.log
+release-notes/
+
+# graft's local graph cache — regenerable, not committed (run `graft build`).
+/graft/

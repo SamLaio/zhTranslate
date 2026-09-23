@@ -7,6 +7,21 @@ import pytest
 from s2tw_converter.converter import Converter, convert_directory, convert_file, read_text_with_fallback
 
 
+def test_hou_uses_context_and_keeps_translator_name():
+    converter = Converter()
+    converted = converter.convert("皇后 太后 后羿 后土 后稷 后来 后面 皇後 呂郁青")
+    assert converted == "皇后 太后 后羿 后土 后稷 後來 後面 皇后 呂郁青"
+    assert converter.convert(converted) == converted
+
+
+def test_character_rules_run_before_phrase_exceptions(tmp_path: Path) -> None:
+    replacements = tmp_path / "custom.tsv"
+    replacements.write_text("AB\tAC\nZ\tB\n", encoding="utf-8")
+    converter = Converter((replacements,))
+    assert converter._apply_replacements("AZ") == "AC"
+    assert converter._apply_replacements("太后 后") == "太后 後"
+
+
 def test_convert_text_uses_opencc_replacements_and_quotes() -> None:
     converted = Converter().convert("实时信息和“后面”")
     assert converted == "即時資訊和「後面」"
@@ -130,6 +145,13 @@ def test_convert_directory_ignores_output_dir_inside_input(tmp_path: Path) -> No
     assert converted == [output_root / "book_zyTw.txt"]
     assert (output_root / "book_zyTw.txt").read_text(encoding="utf-8") == "即時資訊"
     assert not (output_root / "old_zyTw.txt").exists()
+
+
+def test_translator_tu_yucheng_preserves_official_name():
+    converter = Converter()
+    for name in ("涂育诚", "涂育誠", "塗育誠"):
+        assert converter.convert(name) == "涂育誠"
+    assert converter.convert("塗料") == "塗料"
 
 
 def test_convert_directory_skips_existing_zytw_outputs(tmp_path: Path) -> None:

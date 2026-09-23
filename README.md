@@ -11,6 +11,10 @@
 
 ## 功能
 
+- 完整姓名例外保留譯者「涂育誠」，不將姓氏誤轉為「塗」；一般「塗料」等詞不受影響。
+
+- 自訂替換先套用單字規則，再套用詞句例外（詞句間維持長詞優先），例如「太后 → 太後 → 太后」。保留皇后、太后、后羿等例外及譯者姓名「呂郁青」；未收錄的歧義詞仍需補充詞句規則。
+
 - 使用 `opencc-python-reimplemented` 的 `OpenCC("s2tw")`。
 - 內建 `custom_replacements.tsv`，可修正 OpenCC 後仍常見的詞彙偏差。
 - 內建字典已匯入 `D:\project\epub223`、`D:\project\metaFinder` 與 `D:\Downloads\kiwqtshoh.txt` 的可泛用詞彙。
