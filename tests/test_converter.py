@@ -27,6 +27,16 @@ def test_convert_text_uses_opencc_replacements_and_quotes() -> None:
     assert converted == "即時資訊和「後面」"
 
 
+def test_duiyu_uses_standard_traditional_form() -> None:
+    assert Converter().convert("对于山神庙的事情") == "對於山神廟的事情"
+
+
+def test_guanxi_uses_standard_traditional_form() -> None:
+    converter = Converter()
+    assert converter.convert("母女关系") == "母女關係"
+    assert converter.convert("母女關系與親屬關繫") == "母女關係與親屬關係"
+
+
 def test_imported_replacements_from_epub223_and_metafinder() -> None:
     converted = Converter().convert("谷城县的信息安全和计程车兵")
     assert converted == "穀城縣的資訊安全和士兵"
