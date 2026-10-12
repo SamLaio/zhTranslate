@@ -3,6 +3,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
+from functools import lru_cache
+from importlib.resources import files
+import re
 
 try:
     from opencc import OpenCC
@@ -23,6 +26,24 @@ WESTERN_TO_EAST_ASIAN_QUOTES = str.maketrans({
     "‘": "『",
     "’": "』",
 })
+
+
+@lru_cache(maxsize=2)
+def simplified_pattern(include_japanese: bool = False) -> re.Pattern[str]:
+    """由現有 OpenCC 字典判斷明確簡體，保留正體歧義及日文兼用的國／会。"""
+    dictionary = files("opencc").joinpath("dictionary")
+    def pairs(name):
+        return [line.split("\t", 1) for line in dictionary.joinpath(name).read_text(encoding="utf-8").splitlines() if "\t" in line]
+    mappings = pairs("STCharacters.txt")
+    traditional = set("".join(target for _, target in mappings + pairs("TWVariants.txt")))
+    characters = {source for source, _ in mappings if len(source) == 1} - traditional - set("机雇肴洒霉昵晒庄祢疱恒并虱葱")
+    if not include_japanese:
+        characters -= set("国会")
+    # 「么」亦為臺灣正體；只以明確的疑問／指示詞組觸發。
+    characters.discard("双")
+    characters.discard("儿")
+    characters.discard("体")
+    return re.compile("[" + re.escape("".join(sorted(characters))) + "]|(?<!楊)双|双(?!福)|(?<!林凡)儿|(?<!林玉)体|[什怎這这]么|[多那]么(?!蛾子)")
 
 
 def load_replacements(paths: Iterable[Path | str] | None = None) -> tuple[tuple[str, str], ...]:
