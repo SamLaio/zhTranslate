@@ -260,6 +260,43 @@ def test_translator_tu_yucheng_preserves_official_name():
     assert converter.convert("塗料") == "塗料"
 
 
+def test_verified_japanese_author_keeps_official_complete_name():
+    converter = Converter()
+    assert converter.convert("理不盡な孫の手 尽力") == "理不尽な孫の手 盡力"
+    assert converter.convert("理不尽な孫の手") == "理不尽な孫の手"
+    assert not simplified_pattern().search("理不尽な孫の手")
+    for text in ("尽力", "理不尽", "尽な孫の手", "理不尽な孫の手 写作"):
+        assert simplified_pattern().search(text), text
+
+
+def test_then_royal_son_preserves_phrase_boundary():
+    converter = Converter()
+    for text in ("那么儿臣可以告退了？", "那么兒臣可以告退了？", "那麼兒臣可以告退了？"):
+        result = converter.convert(text)
+        assert result == "那麼兒臣可以告退了？"
+        assert converter.convert(result) == result
+    assert converter.convert("么兒、那些么蛾子") == "么兒、那些么蛾子"
+
+
+def test_so_childish_preserves_phrase_boundary():
+    converter = Converter()
+    for text in ("婚事豈能那么儿戏？", "婚事豈能那么兒戲？", "婚事豈能那麼兒戲？"):
+        result = converter.convert(text)
+        assert result == "婚事豈能那麼兒戲？"
+        assert converter.convert(result) == result
+    assert converter.convert("么兒、那些么蛾子") == "么兒、那些么蛾子"
+
+
+def test_do_something_phrase_does_not_become_dry_food():
+    converter = Converter()
+    for text in ("该干点什么呢？", "該乾點什麼呢？", "該干點什麼呢？", "該幹點什麼呢？"):
+        result = converter.convert(text)
+        assert result == "該幹點什麼呢？"
+        assert converter.convert(result) == result
+    assert converter.convert("干点心和干燥剂") == "乾點心和乾燥劑"
+    assert converter.convert("乾點心和乾燥劑") == "乾點心和乾燥劑"
+
+
 def test_convert_directory_skips_existing_zytw_outputs(tmp_path: Path) -> None:
     source_root = tmp_path / "src"
     source_root.mkdir()

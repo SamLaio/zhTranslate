@@ -43,7 +43,8 @@ def simplified_pattern(include_japanese: bool = False) -> re.Pattern[str]:
     characters.discard("双")
     characters.discard("儿")
     characters.discard("体")
-    return re.compile("[" + re.escape("".join(sorted(characters))) + "]|(?<!楊)双|双(?!福)|(?<!林凡)儿|(?<!林玉)体|[什怎這这]么|[多那]么(?!蛾子)")
+    characters.discard("尽")
+    return re.compile("[" + re.escape("".join(sorted(characters))) + "]|(?<!理不)尽|尽(?!な孫の手)|(?<!楊)双|双(?!福)|(?<!林凡)儿|(?<!林玉)体|[什怎這这]么|[多那]么(?!蛾子)")
 
 
 def load_replacements(paths: Iterable[Path | str] | None = None) -> tuple[tuple[str, str], ...]:
@@ -84,6 +85,8 @@ class Converter:
         converted = self._apply_replacements(text)
         converted = self._converter.convert(converted)
         converted = self._apply_replacements(converted)
+        # 「么兒」詞條不可覆蓋「那麼＋兒臣／兒戲」的跨詞邊界。
+        converted = re.sub(r"那么(?=兒(?:臣|戲))", "那麼", converted)
         if self.convert_quotes:
             converted = converted.translate(WESTERN_TO_EAST_ASIAN_QUOTES)
         return converted
