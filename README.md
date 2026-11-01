@@ -70,3 +70,22 @@ CLI 會印出文字或實際輸出路徑；錯誤時檢查結束碼及 stderr。
 原始碼入口為 `python -m s2tw_converter.cli`。未安裝時先設定 `$env:PYTHONPATH="D:\github\zhTranslate\src"` 並安裝 `opencc-python-reimplemented`。
 
 測試：`python -m pytest -q`。授權 GPL-3.0-or-later，見 [LICENSE](LICENSE)。
+
+## 第三方來源與致謝
+
+### 轉換引擎與字典
+
+| 專案／作者 | 使用範圍 | 上游授權 |
+| --- | --- | --- |
+| [opencc-python-reimplemented／Yichen](https://github.com/yichen0831/opencc-python) | 實際呼叫的 Python OpenCC 實作 | Apache-2.0 |
+| [OpenCC／BYVoid 與貢獻者](https://github.com/BYVoid/OpenCC) | `s2tw` 設定、簡繁字詞與臺灣字形字典；亦供明確簡體偵測使用 | Apache-2.0 |
+
+本專案使用上述字典，不將其視為本專案原創詞庫；本專案 GPL-3.0-or-later 不取代其原授權。
+
+### 自訂詞與設計來源
+
+- [metaFinder](https://github.com/SamLaio/metaFinder) 與 [epub223](https://github.com/SamLaio/epub223)：匯入早期自訂替換詞，並將後續可共用修正集中於本專案。
+- 本機歷史詞表 `kiwqtshoh.txt`：既有文件記錄曾保守匯入部分非重複詞條；目前未保存可核實的原作者、公開網址及原始授權，不能將它標成已確認的自製或自由授權來源。此來源資訊缺口仍待補證。
+- [ezPub](https://github.com/SamLaio/ezPub)：文字編碼 fallback 與 CLI 設計參考，沒有匯入其簡轉正字典。
+
+詞庫位置、套用順序與 API 見 [轉換規則](docs/conversion.md)。新增外部詞表時須同時保存作者、來源網址與授權；不能只記本機檔名。
