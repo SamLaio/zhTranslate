@@ -36,7 +36,7 @@ def simplified_pattern(include_japanese: bool = False) -> re.Pattern[str]:
         return [line.split("\t", 1) for line in dictionary.joinpath(name).read_text(encoding="utf-8").splitlines() if "\t" in line]
     mappings = pairs("STCharacters.txt")
     traditional = set("".join(target for _, target in mappings + pairs("TWVariants.txt")))
-    characters = {source for source, _ in mappings if len(source) == 1} - traditional - set("机雇肴洒霉昵晒庄祢疱恒并虱葱")
+    characters = {source for source, _ in mappings if len(source) == 1} - traditional - set("机雇肴洒霉昵晒庄祢疱恒并虱葱疴叁")
     if not include_japanese:
         characters -= set("国会")
     # 「么」亦為臺灣正體；只以明確的疑問／指示詞組觸發。
@@ -44,7 +44,9 @@ def simplified_pattern(include_japanese: bool = False) -> re.Pattern[str]:
     characters.discard("儿")
     characters.discard("体")
     characters.discard("尽")
-    return re.compile("[" + re.escape("".join(sorted(characters))) + "]|(?<!理不)尽|尽(?!な孫の手)|(?<!楊)双|双(?!福)|(?<!林凡)儿|(?<!林玉)体|[什怎這这]么|[多那]么(?!蛾子)")
+    characters.discard("凛")
+    characters.discard("叶")
+    return re.compile("[" + re.escape("".join(sorted(characters))) + "]|(?<!夕鷺)叶|(?<!雨宮処)凛|(?<!理不)尽|尽(?!な孫の手)|(?<!楊)双|双(?!福)|(?<!林凡)儿|(?<!林玉)体|[什怎这]么|這么(?!子)|[多那]么(?!蛾子)")
 
 
 def load_replacements(paths: Iterable[Path | str] | None = None) -> tuple[tuple[str, str], ...]:

@@ -307,3 +307,40 @@ def test_convert_directory_skips_existing_zytw_outputs(tmp_path: Path) -> None:
 
     assert converted == [source_root / "book_zyTw.txt"]
     assert not (source_root / "book_zyTw_zyTw.txt").exists()
+
+
+def test_classical_names_keep_published_traditional_glyphs():
+    converter = Converter()
+    for text in ('伊里亞德', '韋萊特里', '洛克里克', '潘泰萊里亞', '卡馬里納', '薩貢托', '斗羅河', '阿勞西奧里亞', '馬賽里亞', '恩波里亞'):
+        assert converter.convert(text) == text
+        assert converter.convert(converter.convert(text)) == text
+    assert converter.convert('野猪在屋子里，奥林匹克。') == '野豬在屋子裡，奧林匹克。'
+
+
+def test_traditional_ke_character_is_not_simplified():
+    assert not simplified_pattern().search('南北差距是最嚴重的沉疴。')
+    assert simplified_pattern().search('严重的沉疴。')
+
+
+def test_historical_financial_san_does_not_trigger_whole_book_conversion():
+    assert not simplified_pattern().search('郵費每期就要叁萬伍仟圓。')
+    assert simplified_pattern().search('邮费每期就要叁万伍仟圆。')
+
+
+def test_verified_amamiya_karin_preserves_official_japanese_name():
+    assert not simplified_pattern().search('我要推薦雨宮処凛的書。')
+    assert simplified_pattern().search('凛冽寒风。')
+    from s2tw_converter import Converter
+    assert Converter().convert('雨宮処凛') == '雨宮処凛'
+
+
+def test_verified_yunagi_kanou_chinese_pen_name_keeps_official_glyph():
+    assert not simplified_pattern().search('夕鷺叶')
+    assert simplified_pattern().search('叶子')
+    assert Converter().convert('夕鷺叶') == '夕鷺叶'
+
+
+def test_zhe_yaozi_does_not_cross_demonstrative_and_youngest_son():
+    assert not simplified_pattern().search('江家確實不指著你這么子扛門立戶。')
+    assert simplified_pattern().search('江家确实不指着你这么子扛门立户。')
+    assert simplified_pattern().search('你這么做不對。')
