@@ -287,6 +287,15 @@ def test_so_childish_preserves_phrase_boundary():
     assert converter.convert("么兒、那些么蛾子") == "么兒、那些么蛾子"
 
 
+def test_so_childlike_preserves_phrase_boundary():
+    converter = Converter()
+    for text in ('如果樣貌不是那么兒童的話。', '如果样貌不是那么儿童的话。', '如果樣貌不是那麼兒童的話。'):
+        result = converter.convert(text)
+        assert result == '如果樣貌不是那麼兒童的話。'
+        assert converter.convert(result) == result
+    assert converter.convert('么兒與么蛾子') == '么兒與么蛾子'
+
+
 def test_do_something_phrase_does_not_become_dry_food():
     converter = Converter()
     for text in ("该干点什么呢？", "該乾點什麼呢？", "該干點什麼呢？", "該幹點什麼呢？"):

@@ -87,8 +87,8 @@ class Converter:
         converted = self._apply_replacements(text)
         converted = self._converter.convert(converted)
         converted = self._apply_replacements(converted)
-        # 「么兒」詞條不可覆蓋「那麼＋兒臣／兒戲」的跨詞邊界。
-        converted = re.sub(r"那么(?=兒(?:臣|戲))", "那麼", converted)
+        # 「么兒」詞條不可覆蓋「那麼＋兒臣／兒戲／兒童」的跨詞邊界。
+        converted = re.sub(r"那么(?=兒(?:臣|戲|童))", "那麼", converted)
         if self.convert_quotes:
             converted = converted.translate(WESTERN_TO_EAST_ASIAN_QUOTES)
         return converted
