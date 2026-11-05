@@ -18,7 +18,7 @@ s2tw-convert text '实时信息和“后面”'
 從標準輸入讀取：
 
 ```powershell
-Get-Content .\input.txt -Raw | s2tw-convert text
+Get-Content .\input.txt -Raw -Encoding utf8 | s2tw-convert text
 ```
 
 ## 轉換單一檔案
@@ -44,11 +44,11 @@ s2tw-convert dir .\input-dir -o .\output-dir --extensions .txt,.md
 s2tw-convert dir .\input-dir --in-place
 ```
 
-`--in-place` 仍產生 `_zyTw` 新檔，不代表直接改寫原檔。`--overwrite` 控制是否覆蓋既有轉換輸出。
+`--in-place` 仍在來源檔旁產生 `_zyTw` 檔，不直接改寫原始檔；此模式會自動允許覆蓋既有 `_zyTw` 轉換輸出。其他模式預設拒絕覆寫，需明確加 `--overwrite`。
 
 ## 引號、自訂詞與編碼
 
-預設將 `“”‘’` 改為 `「」『』`；英文單字內的撇號（如 `I’m`）保留。同一行成對、內容為中文或純對話標點的半形雙引號改為 `「」`、單引號改為 `『』`；不成對、英文引用、英尺／英吋、可辨識的程式或標記範例保留，不跨行猜配。要保留原引號，加 `--no-quote-convert`。
+預設將 `“”‘’` 按方向改為 `「」『』`，不要求段落含簡體字，也不檢查彎引號是否成對；ASCII英文字母之間的 `’`（如 `I’m`）保留。半形直引號則只處理同一行成對、內容為中文或純對話標點的範圍：雙引號改為 `「」`、單引號改為 `『』`。英文直引號、英尺／英吋、不成對、跨行及可辨識程式／標記範例的直引號保留。要停用全部引號整理，加 `--no-quote-convert`。
 
 Python API `normalize_quotes(text)` 只整理引號，不重跑 OpenCC 或詞彙替換，適用於已轉正體的可讀文字。HTML／XML 的呼叫端仍須先解析並選擇可讀文字節點，不可對整份標記直接處理。
 
@@ -59,7 +59,7 @@ s2tw-convert text "实时" --replacements .\words.tsv
 
 `--replacements` 可重複指定，也適用於 `file`、`dir`。TSV 每行為 `原詞<TAB>正體詞`，忽略空行及 `#` 註解。額外詞檔供當次轉換使用；共用詞庫維護方式見 [轉換規則與整合](docs/conversion.md)。
 
-讀檔依序嘗試 UTF-8 BOM、UTF-8、UTF-16、CP950、Big5、GB18030。自動辨識仍可能有歧義，應檢查輸出是否亂碼。
+讀檔先辨識帶BOM的UTF-16，再嘗試UTF-8（含BOM）；其餘預設以CP950、Big5、GB18030解碼結果的可讀性評分選擇，並非第一個可解碼者直接勝出。CP950／Big5的破損位元組可能以替代字元保留後參與評分；自動辨識仍可能有歧義，應檢查輸出是否亂碼或缺字。沒有提供CLI強制指定編碼的選項。
 
 ## 限制與檢查
 
