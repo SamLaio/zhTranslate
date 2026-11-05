@@ -28,6 +28,34 @@ WESTERN_TO_EAST_ASIAN_QUOTES = str.maketrans({
 })
 
 
+def normalize_quotes(text: str) -> str:
+    """只處理可讀文字的引號，不重跑字形或詞彙轉換。"""
+    text = ''.join(
+        char if char == '’' and i and i + 1 < len(text)
+        and text[i - 1].isascii() and text[i - 1].isalpha()
+        and text[i + 1].isascii() and text[i + 1].isalpha()
+        else char.translate(WESTERN_TO_EAST_ASIAN_QUOTES)
+        for i, char in enumerate(text)
+    )
+    for quote, left, right in [('"', '「', '」'), ("'", '『', '』')]:
+        pattern = re.compile(r'(?<![A-Za-z0-9_\\])' + quote + r'([^' + quote + r'\r\n]*)' + quote + r'(?![A-Za-z0-9_])')
+
+        def replace(match):
+            body = match[1]
+            end = text.find('\n', match.end())
+            line = text[text.rfind('\n', 0, match.start()) + 1:end if end >= 0 else len(text)]
+            # 不猜程式／標記與不成對直引號；純標點對話仍可判定。
+            if re.search(r'[<>\[\]{}=`]|\b[A-Za-z_]\w*\s*\(', line) or not (
+                re.search(r'[\u3400-\u9fff]', body)
+                or body.strip() and re.fullmatch(r'[\s?？!！.…—，、：；~～]+', body)
+            ):
+                return match[0]
+            return left + body + right
+
+        text = pattern.sub(replace, text)
+    return text
+
+
 @lru_cache(maxsize=2)
 def simplified_pattern(include_japanese: bool = False) -> re.Pattern[str]:
     """由現有 OpenCC 字典判斷明確簡體，保留正體歧義及日文兼用的國／会。"""
@@ -90,7 +118,7 @@ class Converter:
         # 「么兒」詞條不可覆蓋「那麼＋兒臣／兒戲／兒童」的跨詞邊界。
         converted = re.sub(r"那么(?=兒(?:臣|戲|童))", "那麼", converted)
         if self.convert_quotes:
-            converted = converted.translate(WESTERN_TO_EAST_ASIAN_QUOTES)
+            converted = normalize_quotes(converted)
         return converted
 
     def _apply_replacements(self, text: str) -> str:

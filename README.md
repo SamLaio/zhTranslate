@@ -4,7 +4,7 @@
 
 以 OpenCC `s2tw` 為基礎，再套用共用自訂詞庫。它處理純文字，不修改 Calibre DB，也不負責 EPUB 結構；EPUB 書籍請透過 epub223 的 `--convert-chinese s2tw` 使用。
 
-目前版本：**0.1.10**。版本異動見 [CHANGELOG](CHANGELOG.md)。
+目前版本：**0.1.11**。版本異動見 [CHANGELOG](CHANGELOG.md)。
 
 ## 安裝與快速開始
 
@@ -48,7 +48,9 @@ s2tw-convert dir .\input-dir --in-place
 
 ## 引號、自訂詞與編碼
 
-預設將 `“”‘’` 改為 `「」『』`；要保留原引號，加 `--no-quote-convert`。
+預設將 `“”‘’` 改為 `「」『』`；英文單字內的撇號（如 `I’m`）保留。同一行成對、內容為中文或純對話標點的半形雙引號改為 `「」`、單引號改為 `『』`；不成對、英文引用、英尺／英吋、可辨識的程式或標記範例保留，不跨行猜配。要保留原引號，加 `--no-quote-convert`。
+
+Python API `normalize_quotes(text)` 只整理引號，不重跑 OpenCC 或詞彙替換，適用於已轉正體的可讀文字。HTML／XML 的呼叫端仍須先解析並選擇可讀文字節點，不可對整份標記直接處理。
 
 ```powershell
 s2tw-convert text '实时“信息”' --no-quote-convert

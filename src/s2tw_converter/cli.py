@@ -28,14 +28,14 @@ def build_parser() -> argparse.ArgumentParser:
     text = sub.add_parser("text", help="轉換命令列文字；未提供文字時讀取 stdin")
     text.add_argument("text", nargs="*", help="要轉換的文字")
     text.add_argument("--replacements", action="append", help="額外自訂替換 TSV，可重複指定")
-    text.add_argument("--no-quote-convert", action="store_true", help="不要把西式彎引號轉成直角引號")
+    text.add_argument("--no-quote-convert", action="store_true", help="保留原引號，不轉換彎引號或中文成對直引號")
 
     file_cmd = sub.add_parser("file", help="轉換單一檔案")
     file_cmd.add_argument("input", help="輸入檔")
     file_cmd.add_argument("-o", "--output", required=True, help="輸出檔基礎路徑，實際檔名會加 _zyTw")
     file_cmd.add_argument("--overwrite", action="store_true", help="允許覆蓋輸出檔")
     file_cmd.add_argument("--replacements", action="append", help="額外自訂替換 TSV，可重複指定")
-    file_cmd.add_argument("--no-quote-convert", action="store_true", help="不要把西式彎引號轉成直角引號")
+    file_cmd.add_argument("--no-quote-convert", action="store_true", help="保留原引號，不轉換彎引號或中文成對直引號")
 
     dir_cmd = sub.add_parser("dir", help="轉換資料夾")
     dir_cmd.add_argument("input", help="輸入資料夾")
@@ -44,7 +44,7 @@ def build_parser() -> argparse.ArgumentParser:
     dir_cmd.add_argument("--overwrite", action="store_true", help="允許覆蓋輸出檔")
     dir_cmd.add_argument("--extensions", help="逗號分隔副檔名，預設 .txt,.md")
     dir_cmd.add_argument("--replacements", action="append", help="額外自訂替換 TSV，可重複指定")
-    dir_cmd.add_argument("--no-quote-convert", action="store_true", help="不要把西式彎引號轉成直角引號")
+    dir_cmd.add_argument("--no-quote-convert", action="store_true", help="保留原引號，不轉換彎引號或中文成對直引號")
 
     return parser
 
