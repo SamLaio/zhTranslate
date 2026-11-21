@@ -16,6 +16,7 @@ def test_dialogue_quotes_and_idempotence(source, expected):
 
 
 @pytest.mark.parametrize('source', [
+    '皇后帶回祕密，無引號正文。',
     "I'm fine. Don't change John's book.",
     'I’m fine. John’s book.',
     'He said "hello"; 5\' 10"; 12" screen.',

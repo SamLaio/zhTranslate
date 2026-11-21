@@ -30,6 +30,8 @@ WESTERN_TO_EAST_ASIAN_QUOTES = str.maketrans({
 
 def normalize_quotes(text: str) -> str:
     """只處理可讀文字的引號，不重跑字形或詞彙轉換。"""
+    if not any(quote in text for quote in '“”‘’"\''):
+        return text
     text = ''.join(
         char if char == '’' and i and i + 1 < len(text)
         and text[i - 1].isascii() and text[i - 1].isalpha()
@@ -74,7 +76,8 @@ def simplified_pattern(include_japanese: bool = False) -> re.Pattern[str]:
     characters.discard("尽")
     characters.discard("凛")
     characters.discard("叶")
-    return re.compile("[" + re.escape("".join(sorted(characters))) + "]|(?<!夕鷺)叶|(?<!雨宮処)凛|(?<!理不)尽|尽(?!な孫の手)|(?<!楊)双|双(?!福)|(?<!林凡)儿|(?<!林玉)体|[什怎这]么|這么(?!子)|[多那]么(?!蛾子)")
+    characters.discard("冲")
+    return re.compile("[" + re.escape("".join(sorted(characters))) + "]|冲(?!方丁)|(?<!夕鷺)叶|(?<!雨宮処)凛|(?<!理不)尽|尽(?!な孫の手)|(?<!楊)双|双(?!福)|(?<!林凡)儿|(?<!林玉)体|[什怎这]么|這么(?!子)|多么(?!蛾子)|那么(?!蛾子|妹(?!妹))")
 
 
 def load_replacements(paths: Iterable[Path | str] | None = None) -> tuple[tuple[str, str], ...]:
@@ -115,8 +118,9 @@ class Converter:
         converted = self._apply_replacements(text)
         converted = self._converter.convert(converted)
         converted = self._apply_replacements(converted)
-        # 「么兒」詞條不可覆蓋「那麼＋兒臣／兒戲／兒童」的跨詞邊界。
-        converted = re.sub(r"那么(?=兒(?:臣|戲|童))", "那麼", converted)
+        # 「么兒」詞條不可覆蓋「這麼／那麼＋兒臣／兒戲／兒童」的跨詞邊界。
+        converted = re.sub(r"([那這])么(?=兒(?:臣|戲|童))", r"\1麼", converted)
+        converted = re.sub(r"那麼妹(?!妹)", "那么妹", converted)
         if self.convert_quotes:
             converted = normalize_quotes(converted)
         return converted

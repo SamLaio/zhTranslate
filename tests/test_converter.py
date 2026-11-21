@@ -152,6 +152,24 @@ def test_author_xiangsuli_preserves_official_pen_name() -> None:
     assert converter.convert(text)==text
 
 
+def test_author_ubukata_keeps_name_without_changing_general_chong_words():
+    converter = Converter()
+    text = converter.convert("沖方丁 冲方丁 衝方丁 衝刺 衝突 沖洗 沖繩")
+    assert text == "冲方丁 冲方丁 冲方丁 衝刺 衝突 沖洗 沖繩"
+    assert converter.convert(text) == text
+    assert not simplified_pattern().search('冲方丁')
+    assert simplified_pattern().search('冲刺')
+    assert simplified_pattern().search('冲方丁 写作')
+
+
+def test_demonstrative_me_does_not_merge_with_erxi():
+    converter = Converter()
+    for text in ('这么儿戏', '這么兒戲', '這麼兒戲'):
+        assert converter.convert(text) == '這麼兒戲'
+        assert not simplified_pattern().search(converter.convert(text))
+    assert converter.convert('么兒 么蛾子') == '么兒 么蛾子'
+
+
 def test_verified_author_and_translator_names_keep_official_characters():
     converter = Converter()
     for name, expected in (("郁保林", "郁保林"), ("鬱保林", "郁保林"),
@@ -353,3 +371,11 @@ def test_zhe_yaozi_does_not_cross_demonstrative_and_youngest_son():
     assert not simplified_pattern().search('江家確實不指著你這么子扛門立戶。')
     assert simplified_pattern().search('江家确实不指着你这么子扛门立户。')
     assert simplified_pattern().search('你這么做不對。')
+
+
+def test_na_yaomei_keeps_youngest_sister_without_hiding_general_nanme():
+    text = "只有我隨父母進京，我那么妹沒有跟來。"
+    assert Converter().convert(text) == text
+    assert not simplified_pattern().search(text)
+    for source in ("那么妹妹也會來。", "多么美好。", "只有我随父母进京，我那么妹没有跟来。"):
+        assert simplified_pattern().search(source)
